@@ -35,7 +35,52 @@ module bubblesort (
         $readmemh("ex1.mem", dmem);
     end
   
-    // --------- Design implementation ----------
-        
+    parameter mem_size = 10;
+  	parameter init = 0;
+    parameter bubbling = 1;
+    parameter restarting = 2;
+    parameter complete = 3;
+
+    reg [1:0] state;
+    reg [15:0] prev;
+    reg [9:0] addr;
+    reg sorted;
+  
+    assign done = state == complete;
+
+    always @(posedge clk or posedge reset) begin
+        if (reset)
+            state <= init;
+        else
+            case (state)
+                init: begin
+                    prev <= dmem[0];
+                    addr <= 1;
+                    sorted <= 1;
+                    state <= bubbling;
+                end
+                bubbling: begin
+                    if (prev > dmem[addr]) begin
+                        sorted <= 0;
+                        dmem[addr - 1] <= dmem[addr];
+                    end else begin
+                        prev <= dmem[addr];
+                        dmem[addr - 1] <= prev;
+                    end
+
+                    if (addr < mem_size - 1)
+                        addr <= addr + 1;
+                    else
+                        state <= restarting;
+                end
+                restarting: begin
+                    dmem[addr] <= prev;
+                    prev <= dmem[0];
+                    addr <= 1;
+                    sorted <= 1;
+                    state <= sorted ? complete : bubbling;
+                end
+            endcase
+    end
 
 endmodule
