@@ -47,58 +47,78 @@ module bubblesort (
     end
     assign m_dout = dmem[m_ra];
   
-    parameter mem_size = 10;
-  	parameter init = 0;
-    parameter bubbling = 1;
-    parameter restarting = 2;
-    parameter complete = 3;
+    // Sorting circuit implementation
 
-    reg [1:0] state;
+    // uncomment the following line for debugging
+    // initial $monitor($time, ": clk=%b, reset=%b, rd_en=%b, done=%b, m_ra=%0h, m_wa=%0h, m_we=%b, m_din=%0h, m_dout=%0h", clk, reset, rd_en, done, m_ra, m_wa, m_we, m_din, m_dout);
+
+    parameter mem_size = 10;
+
+  	parameter init0 = 0;
+  	parameter init1 = 1;
+    parameter bubbling = 2;
+    parameter restarting = 3;
+    parameter completing = 4;
+    parameter complete = 5;
+
+    reg [2:0] state;
     reg [15:0] prev;
-    reg [9:0] addr;
     reg sorted;
   
     assign done = state == complete;
 
     always @(posedge clk or posedge reset) begin
-        if (reset)
-            state <= init;
-        else
+        if (reset) begin
+            m_we <= 0;
+            state <= init0;
+        end else
             case (state)
-                init: begin
-                    prev <= dmem[0];
-                    addr <= 1;
+                init0: begin
+                    // init takes 2 cycles b/c need to set ra before reading dout
+                    m_we <= 0;
+                    m_ra <= 0;
+                    state <= init1;
+                end
+                init1: begin
+                    prev <= m_dout;
                     sorted <= 1;
+                    m_ra <= 1;
                     state <= bubbling;
                 end
                 bubbling: begin
-                    if (prev > dmem[addr]) begin
+                    m_we <= 1;
+                    m_wa <= m_ra - 1;
+                    if (prev > m_dout) begin
                         sorted <= 0;
-                        dmem[addr - 1] <= dmem[addr];
+                        m_din <= m_dout;
                     end else begin
-                        prev <= dmem[addr];
-                        dmem[addr - 1] <= prev;
+                        prev <= m_dout;
+                        m_din <= prev;
                     end
 
-                    if (addr < mem_size - 1)
-                        addr <= addr + 1;
-                    else
+                    if (m_ra < mem_size - 1)
+                        m_ra <= m_ra + 1;
+                    else begin
+                        m_ra <= 0;
                         state <= restarting;
+                    end
                 end
                 restarting: begin
-                    dmem[addr] <= prev;
-                    prev <= dmem[0];
-                    addr <= 1;
+                    m_we <= 1;
+                    m_wa <= mem_size - 1;
+                    m_din <= prev;
+
+                    prev <= m_dout;
                     sorted <= 1;
-                    state <= sorted ? complete : bubbling;
+                    m_ra <= 1;
+                    state <= sorted ? completing : bubbling;
+                end
+                completing: begin
+                    // need an extra clock cycle for mem write to finish
+                    m_we <= 0;
+                    state <= complete;
                 end
             endcase
     end
-
-    // Sorting circuit implementation
-    // TODO: implement a state machine that populates m_we, m_wa, m_ra, m_din, and read m_dout in the correct order.
-        
-    // uncomment the following line for debugging
-    // initial $monitor($time, ": clk=%b, reset=%b, rd_en=%b, done=%b, m_ra=%0h, m_wa=%0h, m_we=%b, m_din=%0h, m_dout=%0h", clk, reset, rd_en, done, m_ra, m_wa, m_we, m_din, m_dout);
 
 endmodule
