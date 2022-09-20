@@ -35,6 +35,15 @@ module DE_STAGE(
   assign op_DE = inst_DE[6:0];  
   assign F3_DE = inst_DE[14:12];
   assign F7_DE = inst_DE[31:25];  
+  
+  // extracting register indices
+  wire [`REGNOBITS-1:0] rs1;
+  wire [`REGNOBITS-1:0] rs2;
+  wire [`REGNOBITS-1:0] rd_DE;
+  
+  assign rs1 = inst_DE[19:15];
+  assign rs2 = inst_DE[24:20];
+  assign rd_DE = inst_DE[11:7];
  
   /* opcode decoding logic */ 
   reg [`IOPBITS-1:0 ] op_I_DE; //  internal opcode enumerator for easy programming.  
@@ -116,6 +125,7 @@ module DE_STAGE(
       op_I_DE = `INVALID_I; 
   end 
 
+/* verilator lint_off LATCH */
   always @(*) begin 
       if ((op_I_DE == `ADD_I) || 
       (op_I_DE == `SUB_I ) || 
@@ -190,22 +200,45 @@ module DE_STAGE(
   always @(*) begin 
     case (type_immediate_DE )  
     `I_immediate: 
-      sxt_imm_DE = {{21{inst_DE[31]}}, inst_DE[30:25], inst_DE[24:21], inst_DE[20]}; 
-      /*
+      sxt_imm_DE = {{21{inst_DE[31]}}, inst_DE[30:20]}; 
     `S_immediate: 
-      sxt_imm_DE =  ... 
+      sxt_imm_DE = {{21{inst_DE[31]}}, inst_DE[30:25], inst_DE[11:7]};
     `B_immediate: 
-      sxt_imm_DE = ... 
+      sxt_imm_DE = {{20{inst_DE[31]}}, inst_DE[7], inst_DE[30:25], inst_DE[11:8], 1'b0};
     `U_immediate: 
-      sxt_imm_DE = ... 
+      sxt_imm_DE = {inst_DE[31], inst_DE[30:20], inst_DE[19:12], {12{1'b0}}};
     `J_immediate: 
-      sxt_imm_DE = ... 
-      */ 
+      sxt_imm_DE = {{12{inst_DE[31]}}, inst_DE[19:12], inst_DE[20], inst_DE[30:25], inst_DE[24:21], 1'b0};
     default:
-      sxt_imm_DE = 32'b0; 
+      sxt_imm_DE = 32'b0;
     endcase  
   end 
-   wire wr_reg_WB; 
+  
+  reg [`DBITS-1:0] rs1_val_DE;
+  reg [`DBITS-1:0] rs2_val_DE;
+  
+  always @(*) begin
+    case (type_I_DE)
+        `R_Type: begin
+          rs1_val_DE = regs[rs1];
+          rs2_val_DE = regs[rs2];
+        end
+        `I_Type: begin
+          rs1_val_DE = regs[rs1];
+          rs2_val_DE = {`DBITS{1'b0}};
+        end
+        `S_Type: begin
+          rs1_val_DE = regs[rs1];
+          rs2_val_DE = regs[rs2];
+        end
+        default: begin
+          rs1_val_DE = {`DBITS{1'b0}};
+          rs2_val_DE = {`DBITS{1'b0}};
+        end
+    endcase
+  end
+  
+   wire wr_reg_WB;
  
  /* this signal is passed from WB stage */ 
   wire wr_reg_WB; // is this instruction writing into a register file? 
@@ -241,6 +274,10 @@ module DE_STAGE(
                                   pcplus_DE,
                                   op_I_DE,
                                   inst_count_DE, 
+                                  rs1_val_DE,
+                                  rs2_val_DE,
+                                  sxt_imm_DE,
+                                  rd_DE,
                                   // more signals might need
                                    bus_canary_DE 
                                   }; 
