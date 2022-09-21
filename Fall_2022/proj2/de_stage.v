@@ -1,4 +1,4 @@
-`include "define.vh" 
+`include "define.vh"
 
 module DE_STAGE(
         input wire                              clk,
@@ -11,7 +11,6 @@ module DE_STAGE(
         output wire [`DE_latch_WIDTH-1:0]       DE_latch_out
     );
 
-    /* pipeline latch*/
     reg [`DE_latch_WIDTH-1:0] DE_latch;
 
     /* architecture register file */
@@ -42,16 +41,18 @@ module DE_STAGE(
     wire [`REGNOBITS-1:0] rd_AGEX;
     wire [`REGNOBITS-1:0] rd_MEM;
 
-    assign rs1 = (type_I_DE == `U_Type) ? 0 : inst_DE[19:15];
-    assign rs2 = (type_I_DE == `I_Type || type_I_DE == `U_Type) ? 0 : inst_DE[24:20];
-    assign rd_DE = (type_I_DE == `S_Type) ? 0 : inst_DE[11:7];
+    assign rs1 = (type_I_DE == `U_Type) ? 5'b0 : inst_DE[19:15];
+    assign rs2 = (type_I_DE == `I_Type || type_I_DE == `U_Type) ? 5'b0 : inst_DE[24:20];
+    assign rd_DE = (type_I_DE == `S_Type) ? 5'b0 : inst_DE[11:7];
 
     /* opcode decoding logic */
     reg [`IOPBITS-1:0 ] op_I_DE; //  internal opcode enumerator for easy programming.
     reg [`TYPENOBITS-1:0] type_I_DE;  // instruction format type information for decoding purpose
     reg [`IMMTYPENOBITS-1:0] type_immediate_DE;  // immediate type information for decodding purpose
 
-    always @(*) begin
+    // determine opcode
+    always @(*)
+    begin
         if ((op_DE == `ADD_OPCODE) && (F3_DE == `ADD_FUNCT3) && (F7_DE == `ADD_FUNCT7))
             op_I_DE = `ADD_I;
         else if ((op_DE == `SUB_OPCODE) && (F3_DE == `SUB_FUNCT3) && (F7_DE == `SUB_FUNCT7))
@@ -102,8 +103,8 @@ module DE_STAGE(
             op_I_DE = `SW_I;
         else if ((op_DE == `JAL_OPCODE))
             op_I_DE = `JAL_I;
-        // else if ((op_DE == `JR_OPCODE) && (F3_DE == `JR_FUNCT3))
-        //  op_I_DE = `JR_I;
+        else if ((op_DE == `JR_OPCODE) && (F3_DE == `JR_FUNCT3))
+            op_I_DE = `JR_I;
         else if ((op_DE == `JALR_OPCODE) && (F3_DE == `JALR_FUNCT3))
             op_I_DE = `JALR_I;
         else if ((op_DE == `BEQ_OPCODE) && (F3_DE == `BEQ_FUNCT3))
@@ -126,8 +127,11 @@ module DE_STAGE(
             op_I_DE = `INVALID_I;
     end
 
-    /* verilator lint_off LATCH */
-    always @(*) begin
+    // determine instruction and immediate formats
+    always @(*)
+    begin
+        type_I_DE = 0;
+        type_immediate_DE = 0;
         if ((op_I_DE == `ADD_I) ||
                 (op_I_DE == `SUB_I ) ||
                 (op_I_DE ==  `AND_I) ||
@@ -173,7 +177,8 @@ module DE_STAGE(
             type_I_DE = `S_Type;
             type_immediate_DE = `S_immediate;
         end
-        else if (op_I_DE ==  `JAL_I)    begin
+        else if (op_I_DE ==  `JAL_I)
+        begin
             type_I_DE = `U_Type;
             type_immediate_DE = `J_immediate;
         end
@@ -194,11 +199,10 @@ module DE_STAGE(
         end
     end
 
-    //////////////////////////////////
-    // **TODO: Complete the rest of the pipeline
-
+    // extend instruction immediate values according to format
     reg  [`DBITS-1:0] sxt_imm_DE;
-    always @(*) begin
+    always @(*)
+    begin
         case (type_immediate_DE )
             `I_immediate:
                 sxt_imm_DE = {{21{inst_DE[31]}}, inst_DE[30:20]};
@@ -218,28 +222,26 @@ module DE_STAGE(
     reg [`DBITS-1:0] rs1_val_DE;
     reg [`DBITS-1:0] rs2_val_DE;
 
-    always @(*) begin
+    // get reg values
+    always @(*)
+    begin
+        rs1_val_DE = {`DBITS{1'b0}};
+        rs2_val_DE = {`DBITS{1'b0}};
         case (type_I_DE)
-            `R_Type: begin
+            `R_Type:
+            begin
                 rs1_val_DE = regs[rs1];
                 rs2_val_DE = regs[rs2];
             end
-            `I_Type: begin
+            `I_Type:
                 rs1_val_DE = regs[rs1];
-                rs2_val_DE = {`DBITS{1'b0}};
-            end
-            `S_Type: begin
+            `S_Type:
+            begin
                 rs1_val_DE = regs[rs1];
                 rs2_val_DE = regs[rs2];
-            end
-            default: begin
-                rs1_val_DE = {`DBITS{1'b0}};
-                rs2_val_DE = {`DBITS{1'b0}};
             end
         endcase
     end
-
-    wire wr_reg_WB;
 
     /* this signal is passed from WB stage */
     wire wr_reg_WB; // is this instruction writing into a register file?
@@ -247,10 +249,9 @@ module DE_STAGE(
     wire [`DBITS-1:0] regval_WB;  // the contents to be written in the register file (or CSR )
     wire [`CSRNOBITS-1:0] wcsrno_WB;  // desitnation CSR register ID
     wire wr_csr_WB; // is this instruction writing into CSR ?
+    assign { wr_reg_WB, wregno_WB, regval_WB, wcsrno_WB, wr_csr_WB} = from_WB_to_DE;
 
     wire br_cond_AGEX;
-    // signals come from WB stage for register WB
-    assign { wr_reg_WB, wregno_WB, regval_WB, wcsrno_WB, wr_csr_WB} = from_WB_to_DE;
     assign { br_cond_AGEX, rd_AGEX } = from_AGEX_to_DE;
     assign { rd_MEM } = from_MEM_to_DE;
 
@@ -266,7 +267,6 @@ module DE_STAGE(
     assign from_DE_to_FE = {pipeline_stall_DE}; // pass the DE stage stall signal to FE stage
 
     wire invalid;
-    // decoding the contents of FE latch out. the order should be matched with the fe_stage.v
     assign {
             inst_DE,
             PC_DE,
@@ -274,10 +274,9 @@ module DE_STAGE(
             inst_count_DE,
             invalid,
             bus_canary_DE
-        }  = from_FE_latch;  // based on the contents of the latch, you can decode the content
+        }  = from_FE_latch;
 
 
-    // assign wire to send the contents of DE latch to other pipeline stages
     assign DE_latch_out = DE_latch;
 
     assign DE_latch_contents = {
@@ -290,12 +289,12 @@ module DE_STAGE(
                rs2_val_DE,
                sxt_imm_DE,
                rd_DE,
-               // more signals might need
                bus_canary_DE
            };
 
     // register file and CSRs initialization
-    initial begin
+    initial
+    begin
         for (integer i = 0; i < 32; ++i)
             regs[i] = {`DBITS{1'b0}};
         for (integer i = 0; i < 16; ++i)
@@ -303,20 +302,25 @@ module DE_STAGE(
     end
 
     // register file and CSRs write
-    always @ (negedge clk) begin
+    always @ (negedge clk)
+    begin
         if (wr_reg_WB && wregno_WB != 0)
             regs[wregno_WB] <= regval_WB;
         else if (wr_csr_WB)
             csr_regs[wcsrno_WB] <= regval_WB;
     end
 
-    always @ (posedge clk) begin // you need to expand this always block
-        if (reset) begin
+    // write latch
+    always @ (posedge clk)
+    begin
+        if (reset)
+        begin
             DE_latch <= {`DE_latch_WIDTH{1'b0}};
         end
-        else begin
-            if (pipeline_stall_DE || invalid || br_cond_AGEX) begin
-                $display("stalled: %b , invalid: %b", pipeline_stall_DE, invalid);
+        else
+        begin
+            if (pipeline_stall_DE || invalid || br_cond_AGEX)
+            begin
                 DE_latch <= {`DE_latch_WIDTH{1'b0}};
             end
             else

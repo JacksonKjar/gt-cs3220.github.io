@@ -1,4 +1,4 @@
- `include "define.vh" 
+`include "define.vh"
 
 module FE_STAGE(
         input wire                              clk,
@@ -15,7 +15,8 @@ module FE_STAGE(
     (* ram_init_file = `IDMEMINITFILE *)
     reg [`DBITS-1:0] imem [`IMEMWORDS-1:0];
 
-    initial begin
+    initial
+    begin
         $readmemh(`IDMEMINITFILE , imem);
     end
 
@@ -68,18 +69,22 @@ module FE_STAGE(
     assign {stall_pipe_FE} = from_DE_to_FE;
 
     // update PC
-    always @ (posedge clk) begin
-        if (reset) begin
+    always @ (posedge clk)
+    begin
+        if (reset)
+        begin
             PC_FE_latch <= `STARTPC;
             inst_count_FE <= 1;  /* inst_count starts from 1 for easy human reading. 1st fetch instructions can have 1 */
         end
         else if (stall_pipe_FE)
             PC_FE_latch <= PC_FE_latch;
-        else if (br_cond_AGEX) begin
+        else if (br_cond_AGEX)
+        begin
             PC_FE_latch <= br_PC_AGEX;
             inst_count_FE <= inst_count_FE - 1;
         end
-        else begin
+        else
+        begin
             PC_FE_latch <= pcplus_FE;
             inst_count_FE <= inst_count_FE + 1;
         end
@@ -87,7 +92,8 @@ module FE_STAGE(
 
 
     // update latch
-    always @ (posedge clk) begin
+    always @ (posedge clk)
+    begin
         if (reset)
         begin
             FE_latch <= {`FE_latch_WIDTH{1'b0}};

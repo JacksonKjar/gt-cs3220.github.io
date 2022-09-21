@@ -1,4 +1,4 @@
- `include "define.vh" 
+`include "define.vh"
 
 module AGEX_STAGE(
         input  wire                               clk,
@@ -12,14 +12,12 @@ module AGEX_STAGE(
     );
 
     reg [`AGEX_latch_WIDTH-1:0] AGEX_latch;
-    // wire to send the AGEX latch contents to other pipeline stages
     assign AGEX_latch_out = AGEX_latch;
 
     wire[`AGEX_latch_WIDTH-1:0] AGEX_latch_contents;
 
-
-    wire [`INSTBITS-1:0]inst_AGEX;
-    wire [`DBITS-1:0]PC_AGEX;
+    wire [`INSTBITS-1:0] inst_AGEX;
+    wire [`DBITS-1:0] PC_AGEX;
     wire [`DBITS-1:0] inst_count_AGEX;
     wire [`DBITS-1:0] pcplus_AGEX;
     wire [`DBITS-1:0] rs1_val_AGEX;
@@ -27,60 +25,37 @@ module AGEX_STAGE(
     wire [`DBITS-1:0] sxt_imm_AGEX;
     wire [`REGNOBITS-1:0] rd_AGEX;
     wire [`IOPBITS-1:0] op_I_AGEX;
-    reg br_cond_AGEX; // 1 means a branch condition is satisified. 0 means a branch condition is not satisifed
-
+    reg [`DBITS-1:0] alu_out;
+    reg br_cond_AGEX; // true (1) if should take branch
 
     wire[`BUS_CANARY_WIDTH-1:0] bus_canary_AGEX;
 
-    // **TODO: Complete the rest of the pipeline
 
-
-    always @ (*) begin
+    // evaluate branch conditions
+    always @ (*)
+    begin
         case (op_I_AGEX)
-            `BEQ_I : begin
+            `BEQ_I :
                 br_cond_AGEX = rs1_val_AGEX == rs2_val_AGEX;
-            end // write correct code to check the branch condition.
-            /*
-            `BNE_I : ...
-            `BLT_I : ...
-            `BGE_I : ...
-            `BLTU_I: ..
-            `BGEU_I : ...
-            */
-            default : br_cond_AGEX = 1'b0;
+            default :
+                br_cond_AGEX = 1'b0;
         endcase
     end
 
-
     // compute ALU operations  (alu out or memory addresses)
-
-    reg [`DBITS-1:0] alu_out;
-    always @ (*) begin
+    always @ (*)
+    begin
         case (op_I_AGEX)
             `ADD_I:
                 alu_out = rs1_val_AGEX + rs2_val_AGEX;
             `ADDI_I:
                 alu_out = rs1_val_AGEX + sxt_imm_AGEX;
             `BEQ_I:
-            begin
                 alu_out = PC_AGEX + sxt_imm_AGEX;
-                $display("br addr: %h; rs1: %h, rs2: %h", alu_out, rs1_val_AGEX, rs2_val_AGEX);
-            end
             default:
                 alu_out = 0;
         endcase
     end
-
-    // branch target needs to be computed here
-    // computed branch target needs to send to other pipeline stages (pctarget_AGEX)
-
-    always @(*)begin
-        /*
-          if (op_I_AGEX == `JAL_I) 
-          ... 
-          */
-    end
-
 
     assign  {
             inst_AGEX,
@@ -92,7 +67,6 @@ module AGEX_STAGE(
             rs2_val_AGEX,
             sxt_imm_AGEX,
             rd_AGEX,
-            // more signals might need
             bus_canary_AGEX
         } = from_DE_latch;
 
@@ -103,23 +77,18 @@ module AGEX_STAGE(
                inst_count_AGEX,
                alu_out,
                rd_AGEX,
-               // more signals might need
                bus_canary_AGEX
            };
 
     assign from_AGEX_to_DE = {br_cond_AGEX, rd_AGEX};
     assign from_AGEX_to_FE = {br_cond_AGEX, alu_out};
 
-    always @ (posedge clk) begin
-        if (reset) begin
+    always @ (posedge clk)
+    begin
+        if (reset)
             AGEX_latch <= {`AGEX_latch_WIDTH{1'b0}};
-            // might need more code here
-        end
         else
-        begin
-            // need to complete
-            AGEX_latch <= AGEX_latch_contents ;
-        end
+            AGEX_latch <= AGEX_latch_contents;
     end
 
 endmodule

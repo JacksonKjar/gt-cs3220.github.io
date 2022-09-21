@@ -1,4 +1,4 @@
- `include "define.vh" 
+`include "define.vh"
 
 module pipeline (
         input wire clk,
@@ -81,7 +81,8 @@ module pipeline (
                  .from_WB_to_MEM(from_WB_to_MEM)
              );
 
-    always @ (posedge clk) begin
+    always @ (posedge clk)
+    begin
         if (reset)
             cycle_count <= 0;
         else

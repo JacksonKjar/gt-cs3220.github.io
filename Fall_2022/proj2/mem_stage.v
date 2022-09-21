@@ -1,4 +1,4 @@
- `include "define.vh" 
+`include "define.vh"
 
 module MEM_STAGE(
         input wire                              clk,
@@ -15,16 +15,14 @@ module MEM_STAGE(
     reg [`DBITS-1:0] dmem[`DMEMWORDS-1:0];
 
     // DMEM and IMEM should contains the same contents
-    initial begin
+    initial
+    begin
         $readmemh(`IDMEMINITFILE , dmem);
     end
-
 
     reg [`MEM_latch_WIDTH-1:0] MEM_latch;
 
     wire[`MEM_latch_WIDTH-1:0] MEM_latch_contents;
-
-
 
     wire [`IOPBITS-1:0] op_I_MEM;
     wire [`DBITS-1:0] inst_count_MEM;
@@ -36,8 +34,6 @@ module MEM_STAGE(
 
     wire [`BUS_CANARY_WIDTH-1:0] bus_canary_MEM;
 
-    // **TODO: Complete the rest of the pipeline
-
     wire [`DBITS-1:0] memaddr_MEM;  // memory address. need to be computed in AGEX stage and pass through a latch
     wire [`DBITS-1:0] rd_val_MEM;  // memory read value
     wire [`DBITS-1:0] wr_val_MEM;  // memory write value
@@ -48,10 +44,9 @@ module MEM_STAGE(
 
 
     // Write to D-MEM
-    always @ (posedge clk) begin
+    always @ (posedge clk)
+    begin
         if (wr_mem_MEM)
-            // fill out the correct signal name to do write operations
-
             dmem[memaddr_MEM[`DMEMADDRBITS-1:`DMEMWORDBITS]] <= wr_val_MEM;
     end
 
@@ -66,7 +61,6 @@ module MEM_STAGE(
             inst_count_MEM,
             alu_res_MEM,
             rd_MEM,
-            // more signals might need
             bus_canary_MEM
         } = from_AGEX_latch;
 
@@ -79,18 +73,15 @@ module MEM_STAGE(
                inst_count_MEM,
                rd_val_MEM,
                rd_MEM,
-               // more signals might need
                bus_canary_MEM
            };
 
-    always @ (posedge clk) begin
-        if (reset) begin
+    always @ (posedge clk)
+    begin
+        if (reset)
             MEM_latch <= {`MEM_latch_WIDTH{1'b0}};
-        end else begin
+        else
             MEM_latch <= MEM_latch_contents;
-        end
     end
-
-
 
 endmodule

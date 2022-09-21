@@ -1,4 +1,4 @@
- `include "define.vh" 
+`include "define.vh"
 
 module WB_STAGE(
         input wire                              clk,
@@ -27,9 +27,6 @@ module WB_STAGE(
 
     wire [`CSRNOBITS-1:0] wcsrno_WB;  // desitnation CSR register ID
     wire wr_csr_WB; // is this instruction writing into CSR ?
-
-    // **TODO: Complete the rest of the pipeline**
-
 
     assign {
             inst_WB,
@@ -60,13 +57,15 @@ module WB_STAGE(
     // special workaround to get tests Pass/Fail status
     reg [`DBITS-1:0] last_WB_value [`REGWORDS-1:0] /* verilator public */;
     reg [`DBITS-1:0] WB_counters[`REGWORDS-1:0]   /* verilator public */ ;
-    always @(negedge clk) begin
+    always @(negedge clk)
+    begin
         if (wr_reg_WB)
             last_WB_value[wregno_WB] <= regval_WB;
     end
 
     // this is only for debugging purpose to interact with sim_main.cpp when we use verilator
-    always @(posedge clk) begin
+    always @(posedge clk)
+    begin
         // don't use WB_counters[0]
         WB_counters[1] <=  PC_WB;
         WB_counters[2] <=  inst_WB;
