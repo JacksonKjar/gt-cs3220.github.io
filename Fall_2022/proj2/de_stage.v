@@ -103,8 +103,6 @@ module DE_STAGE(
             op_I_DE = `SW_I;
         else if ((op_DE == `JAL_OPCODE))
             op_I_DE = `JAL_I;
-        else if ((op_DE == `JR_OPCODE) && (F3_DE == `JR_FUNCT3))
-            op_I_DE = `JR_I;
         else if ((op_DE == `JALR_OPCODE) && (F3_DE == `JALR_FUNCT3))
             op_I_DE = `JALR_I;
         else if ((op_DE == `BEQ_OPCODE) && (F3_DE == `BEQ_FUNCT3))
@@ -154,7 +152,6 @@ module DE_STAGE(
                  (op_I_DE == `SLTI_I) ||
                  (op_I_DE == `SLTIU_I ) ||
                  (op_I_DE == `LW_I ) ||
-                 (op_I_DE == `JR_I) ||
                  (op_I_DE == `JALR_I) )
         begin
             type_I_DE = `I_Type;
@@ -211,7 +208,7 @@ module DE_STAGE(
             `B_immediate:
                 sxt_imm_DE = {{20{inst_DE[31]}}, inst_DE[7], inst_DE[30:25], inst_DE[11:8], 1'b0};
             `U_immediate:
-                sxt_imm_DE = {inst_DE[31], inst_DE[30:20], inst_DE[19:12], {12{1'b0}}};
+                sxt_imm_DE = {inst_DE[31:12], {12{1'b0}}};
             `J_immediate:
                 sxt_imm_DE = {{12{inst_DE[31]}}, inst_DE[19:12], inst_DE[20], inst_DE[30:25], inst_DE[24:21], 1'b0};
             default:

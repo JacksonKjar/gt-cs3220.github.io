@@ -40,10 +40,14 @@ module WB_STAGE(
         } = from_MEM_latch;
 
     // write register by sending data to the DE stage
-
     assign wr_reg_WB = (
                op_I_WB == `ADD_I
                || op_I_WB == `ADDI_I
+               || op_I_WB == `SUB_I
+               || op_I_WB == `AUIPC_I
+               || op_I_WB == `JAL_I
+               || op_I_WB == `JALR_I
+               || op_I_WB == `LUI_I
            );
     assign wregno_WB = rd_WB;
     assign regval_WB = rd_val_WB;

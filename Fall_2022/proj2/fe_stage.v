@@ -76,13 +76,13 @@ module FE_STAGE(
             PC_FE_latch <= `STARTPC;
             inst_count_FE <= 1;  /* inst_count starts from 1 for easy human reading. 1st fetch instructions can have 1 */
         end
-        else if (stall_pipe_FE)
-            PC_FE_latch <= PC_FE_latch;
         else if (br_cond_AGEX)
         begin
             PC_FE_latch <= br_PC_AGEX;
             inst_count_FE <= inst_count_FE - 1;
         end
+        else if (stall_pipe_FE)
+            PC_FE_latch <= PC_FE_latch;
         else
         begin
             PC_FE_latch <= pcplus_FE;
@@ -100,7 +100,7 @@ module FE_STAGE(
         end
         else
         begin
-            if (stall_pipe_FE)
+            if (!br_cond_AGEX && stall_pipe_FE)
                 FE_latch <= FE_latch;
             else
                 FE_latch <= FE_latch_contents;

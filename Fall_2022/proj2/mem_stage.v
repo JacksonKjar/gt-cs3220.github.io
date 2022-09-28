@@ -29,6 +29,7 @@ module MEM_STAGE(
     wire [`INSTBITS-1:0] inst_MEM;
     wire [`DBITS-1:0] PC_MEM;
     wire [`DBITS-1:0] alu_res_MEM;
+    wire [`DBITS-1:0] address_MEM;
     wire [`REGNOBITS-1:0] rd_MEM;
 
 
@@ -60,6 +61,7 @@ module MEM_STAGE(
             op_I_MEM,
             inst_count_MEM,
             alu_res_MEM,
+            address_MEM,
             rd_MEM,
             bus_canary_MEM
         } = from_AGEX_latch;
