@@ -161,7 +161,10 @@ module DE_STAGE(
         else if ((op_I_DE ==  `SRAI_I ) ||
                  (op_I_DE == `SRLI_I) ||
                  (op_I_DE == `SLLI_I))
+        begin
             type_I_DE = `I_Type;
+            type_immediate_DE = `D_immediate;
+        end
 
         else if ((op_I_DE ==  `LUI_I) ||
                  (op_I_DE == `AUIPC_I ))
@@ -211,6 +214,8 @@ module DE_STAGE(
                 sxt_imm_DE = {inst_DE[31:12], {12{1'b0}}};
             `J_immediate:
                 sxt_imm_DE = {{12{inst_DE[31]}}, inst_DE[19:12], inst_DE[20], inst_DE[30:25], inst_DE[24:21], 1'b0};
+            `D_immediate:
+                sxt_imm_DE = {{27{inst_DE[24]}}, inst_DE[24:20]};
             default:
                 sxt_imm_DE = 32'b0;
         endcase

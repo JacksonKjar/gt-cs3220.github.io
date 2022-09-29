@@ -28,8 +28,6 @@ module MEM_STAGE(
     wire [`DBITS-1:0] inst_count_MEM;
     wire [`INSTBITS-1:0] inst_MEM;
     wire [`DBITS-1:0] PC_MEM;
-    wire [`DBITS-1:0] alu_res_MEM;
-    wire [`DBITS-1:0] address_MEM;
     wire [`REGNOBITS-1:0] rd_MEM;
 
 
@@ -38,10 +36,12 @@ module MEM_STAGE(
     wire [`DBITS-1:0] memaddr_MEM;  // memory address. need to be computed in AGEX stage and pass through a latch
     wire [`DBITS-1:0] rd_val_MEM;  // memory read value
     wire [`DBITS-1:0] wr_val_MEM;  // memory write value
-    wire wr_mem_MEM;  // is this instruction writing a value into memory?
+    wire wr_mem_MEM;
+    assign wr_mem_MEM = op_I_MEM == `SW_I;
+
     // Read from D-MEM  (read code is completed if there is a correct memaddr_MEM )
-    //assign rd_val_MEM = dmem[memaddr_MEM[`DMEMADDRBITS-1:`DMEMWORDBITS]];
-    assign rd_val_MEM = alu_res_MEM;
+    assign rd_val_MEM = op_I_MEM == `LW_I ? dmem[memaddr_MEM[`DMEMADDRBITS-1:`DMEMWORDBITS]] : wr_val_MEM;
+
 
 
     // Write to D-MEM
@@ -60,8 +60,8 @@ module MEM_STAGE(
             PC_MEM,
             op_I_MEM,
             inst_count_MEM,
-            alu_res_MEM,
-            address_MEM,
+            wr_val_MEM,
+            memaddr_MEM,
             rd_MEM,
             bus_canary_MEM
         } = from_AGEX_latch;

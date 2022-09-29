@@ -22,9 +22,10 @@ module AGEX_STAGE(
     wire [`DBITS-1:0] pcplus_AGEX;
     wire [`DBITS-1:0] rs1_val_AGEX;
     wire [`DBITS-1:0] rs2_val_AGEX;
+    wire [`DBITS-1:0] sxt_imm_AGEX;
     wire signed [`DBITS-1:0] srs1_val_AGEX;
     wire signed [`DBITS-1:0] srs2_val_AGEX;
-    wire [`DBITS-1:0] sxt_imm_AGEX;
+    wire signed [`DBITS-1:0] ssxt_imm_AGEX;
     wire [`REGNOBITS-1:0] rd_AGEX;
     wire [`IOPBITS-1:0] op_I_AGEX;
     reg [`DBITS-1:0] alu_out;
@@ -35,6 +36,7 @@ module AGEX_STAGE(
 
     assign srs1_val_AGEX = rs1_val_AGEX;
     assign srs2_val_AGEX = rs2_val_AGEX;
+    assign ssxt_imm_AGEX = sxt_imm_AGEX;
 
     // evaluate branch conditions
     always @ (*)
@@ -69,24 +71,58 @@ module AGEX_STAGE(
         case (op_I_AGEX)
             `ADD_I:
                 alu_out = rs1_val_AGEX + rs2_val_AGEX;
-            `ADDI_I:
-                alu_out = rs1_val_AGEX + sxt_imm_AGEX;
             `SUB_I:
                 alu_out = rs1_val_AGEX - rs2_val_AGEX;
-            `BEQ_I:
-                address = PC_AGEX + sxt_imm_AGEX;
-            `BNE_I:
-                address = PC_AGEX + sxt_imm_AGEX;
-            `BLTU_I:
-                address = PC_AGEX + sxt_imm_AGEX;
-            `BGEU_I:
-                address = PC_AGEX + sxt_imm_AGEX;
-            `BLT_I:
-                address = PC_AGEX + sxt_imm_AGEX;
-            `BGE_I:
-                address = PC_AGEX + sxt_imm_AGEX;
+            `AND_I:
+                alu_out = rs1_val_AGEX & rs2_val_AGEX;
+            `OR_I:
+                alu_out = rs1_val_AGEX | rs2_val_AGEX;
+            `XOR_I:
+                alu_out = rs1_val_AGEX ^ rs2_val_AGEX;
+            `SLT_I:
+                alu_out = {{31{1'b0}}, srs1_val_AGEX < srs2_val_AGEX};
+            `SLTU_I:
+                alu_out = {{31{1'b0}}, rs1_val_AGEX < rs2_val_AGEX};
+            `SRA_I:
+                alu_out = srs1_val_AGEX >>> rs2_val_AGEX[4:0];
+            `SRL_I:
+                alu_out = rs1_val_AGEX >> rs2_val_AGEX[4:0];
+            `SLL_I:
+                alu_out = rs1_val_AGEX << rs2_val_AGEX[4:0];
+            `MUL_I:
+                alu_out = srs1_val_AGEX * srs2_val_AGEX[4:0];
+
+            `ADDI_I:
+                alu_out = rs1_val_AGEX + sxt_imm_AGEX;
+            `ANDI_I:
+                alu_out = rs1_val_AGEX & sxt_imm_AGEX;
+            `ORI_I:
+                alu_out = rs1_val_AGEX | sxt_imm_AGEX;
+            `XORI_I:
+                alu_out = rs1_val_AGEX ^ sxt_imm_AGEX;
+            `SLTI_I:
+                alu_out = {{31{1'b0}}, srs1_val_AGEX < ssxt_imm_AGEX};
+            `SLTIU_I:
+                alu_out = {{31{1'b0}}, rs1_val_AGEX < sxt_imm_AGEX};
+            `SRAI_I:
+                alu_out = srs1_val_AGEX >>> sxt_imm_AGEX[4:0];
+            `SRLI_I:
+                alu_out = rs1_val_AGEX >> sxt_imm_AGEX[4:0];
+            `SLLI_I:
+                alu_out = rs1_val_AGEX << sxt_imm_AGEX[4:0];
+            `LUI_I:
+                alu_out = sxt_imm_AGEX;
             `AUIPC_I:
                 alu_out = PC_AGEX + sxt_imm_AGEX;
+
+            `LW_I:
+                address = rs1_val_AGEX + sxt_imm_AGEX;
+            `SW_I:
+            begin
+                alu_out = rs2_val_AGEX;
+                address = rs1_val_AGEX + sxt_imm_AGEX;
+            end
+
             `JAL_I:
             begin
                 alu_out = pcplus_AGEX;
@@ -97,8 +133,19 @@ module AGEX_STAGE(
                 alu_out = pcplus_AGEX;
                 address = {{rs1_val_AGEX + sxt_imm_AGEX}[31:1], 1'b0};
             end
-            `LUI_I:
-                alu_out = sxt_imm_AGEX;
+
+            `BEQ_I:
+                address = PC_AGEX + sxt_imm_AGEX;
+            `BNE_I:
+                address = PC_AGEX + sxt_imm_AGEX;
+            `BLT_I:
+                address = PC_AGEX + sxt_imm_AGEX;
+            `BGE_I:
+                address = PC_AGEX + sxt_imm_AGEX;
+            `BLTU_I:
+                address = PC_AGEX + sxt_imm_AGEX;
+            `BGEU_I:
+                address = PC_AGEX + sxt_imm_AGEX;
         endcase
     end
 
