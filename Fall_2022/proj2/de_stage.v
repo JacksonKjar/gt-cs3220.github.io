@@ -224,7 +224,12 @@ module DE_STAGE(
     reg [`DBITS-1:0] rs1_val_DE;
     reg [`DBITS-1:0] rs2_val_DE;
 
-    // get reg values
+    wire [`DBITS-1:0] forward_rs1_val;   // get reg values
+    wire [`DBITS-1:0] forward_rs2_val;   // get reg values
+
+    assign forward_rs1_val = rs1 != 0 && wr_reg_WB && rs1 == wregno_WB ? regval_WB : regs[rs1];
+    assign forward_rs2_val = rs2 != 0 && wr_reg_WB && rs2 == wregno_WB ? regval_WB : regs[rs2];
+
     always @(*)
     begin
         rs1_val_DE = {`DBITS{1'b0}};
@@ -232,15 +237,15 @@ module DE_STAGE(
         case (type_I_DE)
             `R_Type:
             begin
-                rs1_val_DE = regs[rs1];
-                rs2_val_DE = regs[rs2];
+                rs1_val_DE = forward_rs1_val;
+                rs2_val_DE = forward_rs2_val;
             end
             `I_Type:
-                rs1_val_DE = regs[rs1];
+                rs1_val_DE = forward_rs1_val;
             `S_Type:
             begin
-                rs1_val_DE = regs[rs1];
-                rs2_val_DE = regs[rs2];
+                rs1_val_DE = forward_rs1_val;
+                rs2_val_DE = forward_rs2_val;
             end
         endcase
     end
@@ -258,11 +263,9 @@ module DE_STAGE(
     assign { rd_MEM } = from_MEM_to_DE;
 
     wire rs1_dependency;
-    assign rs1_dependency = rs1 != 0 &&
-           (rs1 == rd_AGEX || rs1 == rd_MEM || rs1 == wregno_WB);
+    assign rs1_dependency = rs1 != 0 && (rs1 == rd_AGEX || rs1 == rd_MEM);
     wire rs2_dependency;
-    assign rs2_dependency = rs2 != 0 &&
-           (rs2 == rd_AGEX || rs2 == rd_MEM || rs2 == wregno_WB);
+    assign rs2_dependency = rs2 != 0 && (rs2 == rd_AGEX || rs2 == rd_MEM);
 
     wire pipeline_stall_DE;
     assign pipeline_stall_DE = rs1_dependency || rs2_dependency;
