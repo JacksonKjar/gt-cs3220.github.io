@@ -272,7 +272,7 @@ module DE_STAGE(
     assign from_DE_to_FE = {pipeline_stall_DE}; // pass the DE stage stall signal to FE stage
 
     wire [7:0] pht_index;
-    wire predict_taken;
+    wire [`DBITS-1:0] predicted_pc;
 
     wire invalid;
     assign {
@@ -280,7 +280,7 @@ module DE_STAGE(
             PC_DE,
             pcplus_DE,
             pht_index,
-            predict_taken,
+            predicted_pc,
             inst_count_DE,
             invalid,
             bus_canary_DE
@@ -294,7 +294,7 @@ module DE_STAGE(
                PC_DE,
                pcplus_DE,
                pht_index,
-               predict_taken,
+               predicted_pc,
                op_I_DE,
                inst_count_DE,
                rs1_val_DE,

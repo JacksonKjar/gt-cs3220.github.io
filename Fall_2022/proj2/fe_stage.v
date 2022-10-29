@@ -69,13 +69,15 @@ module FE_STAGE(
     assign pcplus_FE = PC_FE_latch + `INSTSIZE;
 
 
+    wire [`DBITS-1:0] predicted_pc = predict_taken ? btb_target : pcplus_FE;
+
     // the order of latch contents should be matched in the decode stage when we extract the contents.
     assign FE_latch_contents = {
                inst_FE,
                PC_FE_latch,
                pcplus_FE,
 	       pht_index,
-	       predict_taken,
+	       predicted_pc,
                inst_count_FE,
                br_mispredicted_AGEX, // invalid
                `BUS_CANARY_VALUE // for an error checking of bus encoding/decoding
@@ -116,7 +118,7 @@ module FE_STAGE(
             PC_FE_latch <= PC_FE_latch;
         else
         begin
-            PC_FE_latch <= predict_taken ? btb_target : pcplus_FE;
+            PC_FE_latch <= predicted_pc;
             inst_count_FE <= inst_count_FE + 1;
         end
     end

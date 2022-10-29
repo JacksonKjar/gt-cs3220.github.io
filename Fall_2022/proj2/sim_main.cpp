@@ -21,7 +21,7 @@ uint64_t timestamp = 0;
 
 double sc_time_stamp() { return timestamp; }
 
-#define RUN_CYCLES 1000
+#define RUN_CYCLES 40000
 
 #define CLOCK_PERIOD 10
 
@@ -106,7 +106,7 @@ int main(int argc, char **argv, char **env) {
     ++timestamp;
   }
 
-  int exitcode = (int)dut->pipeline->my_WB_stage->last_WB_value[3];
+  int exitcode = (int)dut->pipeline->my_WB_stage->last_WB_value[10];
 
   // Final model cleanup
   dut->final();
@@ -120,7 +120,7 @@ int main(int argc, char **argv, char **env) {
   delete dut;
 
   // TinyRV1 test Pass/Fail status
-  if (1 == exitcode)
+  if (255 == exitcode)
     std::cout << "Passed! cycle_count:" << last_print_inst_count_WB
               << std::endl;
   else
