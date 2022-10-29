@@ -38,6 +38,14 @@ module AGEX_STAGE(
     assign srs2_val_AGEX = rs2_val_AGEX;
     assign ssxt_imm_AGEX = sxt_imm_AGEX;
 
+    wire is_br = op_I_AGEX == `BEQ_I
+        || op_I_AGEX == `BNE_I
+        || op_I_AGEX == `BLTU_I
+        || op_I_AGEX == `BGEU_I
+        || op_I_AGEX == `BLT_I
+        || op_I_AGEX == `BGE_I
+        || op_I_AGEX == `JAL_I
+        || op_I_AGEX == `JALR_I;
     // evaluate branch conditions
     always @ (*)
     begin
@@ -149,10 +157,15 @@ module AGEX_STAGE(
         endcase
     end
 
+    wire [7:0] pht_index;
+    wire predict_taken;
+
     assign  {
             inst_AGEX,
             PC_AGEX,
             pcplus_AGEX,
+            pht_index,
+            predict_taken,
             op_I_AGEX,
             inst_count_AGEX,
             rs1_val_AGEX,
@@ -173,8 +186,16 @@ module AGEX_STAGE(
                bus_canary_AGEX
            };
 
-    assign from_AGEX_to_DE = {br_cond_AGEX, rd_AGEX};
-    assign from_AGEX_to_FE = {br_cond_AGEX, address};
+    assign from_AGEX_to_DE = {predict_taken != br_cond_AGEX, rd_AGEX};
+    assign from_AGEX_to_FE = {
+        is_br,
+        predict_taken != br_cond_AGEX,//br_mispredicted_AGEX
+        br_cond_AGEX,
+        address,
+        pcplus_AGEX,
+        PC_AGEX,
+        pht_index
+        };
 
     always @ (posedge clk)
     begin

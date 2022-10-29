@@ -10,7 +10,6 @@ module FE_STAGE(
         output wire [`FE_latch_WIDTH-1:0]       FE_latch_out
     );
 
-
     // I-MEM
     (* ram_init_file = `IDMEMINITFILE *)
     reg [`DBITS-1:0] imem [`IMEMWORDS-1:0];
@@ -18,6 +17,8 @@ module FE_STAGE(
     initial
     begin
         $readmemh(`IDMEMINITFILE , imem);
+        for (integer i = 0; i < 256; ++i)
+            pht[i] = 0;
     end
 
     /*
@@ -28,6 +29,21 @@ module FE_STAGE(
       end
     end
     */
+
+    // branch prediction
+
+    reg [1:0] pht [255:0];
+
+    reg [7:0] bhr;
+
+    reg [58:0] btb [15:0];
+
+    wire [58:0] btb_entry = btb[PC_FE_latch[5:2]];
+    wire [`DBITS - 1 : 0] btb_target = btb_entry[31:0];
+    wire btb_hit = btb_entry[58] && btb_entry[57:32] == PC_FE_latch[31:6];
+
+    wire [7:0] pht_index = PC_FE_latch[9:2] ^ bhr;
+    wire predict_taken = pht[pht_index] > 1 && btb_hit;
 
     /* pipeline latch */
     reg [`FE_latch_WIDTH-1:0] FE_latch;
@@ -58,14 +74,29 @@ module FE_STAGE(
                inst_FE,
                PC_FE_latch,
                pcplus_FE,
+	       pht_index,
+	       predict_taken,
                inst_count_FE,
-               br_cond_AGEX, // invalid
+               br_mispredicted_AGEX, // invalid
                `BUS_CANARY_VALUE // for an error checking of bus encoding/decoding
            };
 
-    wire br_cond_AGEX; // do we need to follow branch (determined by AGEX)
-    wire [`DBITS-1:0] br_PC_AGEX; // new pc to branch to (determined by AGEX)
-    assign {br_cond_AGEX, br_PC_AGEX} = from_AGEX_to_FE;
+    wire is_br_AGEX; // was this instruction a branch
+    wire br_mispredicted_AGEX; // did we mispredict it
+    wire br_taken_AGEX; // is the branch supposed to be taken
+    wire [`DBITS-1:0] br_target_AGEX; // new pc if taken
+    wire [`DBITS-1:0] pcplus_AGEX; // new pc if not taken
+    wire [`DBITS-1:0] PC_AGEX; // used to index the btb to add target
+    wire [7:0] pht_index_AGEX; // used to index the pht
+    assign {
+	is_br_AGEX,
+	br_mispredicted_AGEX,
+	br_taken_AGEX,
+	br_target_AGEX,
+	pcplus_AGEX,
+	PC_AGEX,
+	pht_index_AGEX
+    } = from_AGEX_to_FE;
     assign {stall_pipe_FE} = from_DE_to_FE;
 
     // update PC
@@ -76,20 +107,19 @@ module FE_STAGE(
             PC_FE_latch <= `STARTPC;
             inst_count_FE <= 1;  /* inst_count starts from 1 for easy human reading. 1st fetch instructions can have 1 */
         end
-        else if (br_cond_AGEX)
+        else if (br_mispredicted_AGEX)
         begin
-            PC_FE_latch <= br_PC_AGEX;
+            PC_FE_latch <= br_taken_AGEX ? br_target_AGEX : pcplus_AGEX;
             inst_count_FE <= inst_count_FE - 1;
         end
         else if (stall_pipe_FE)
             PC_FE_latch <= PC_FE_latch;
         else
         begin
-            PC_FE_latch <= pcplus_FE;
+            PC_FE_latch <= predict_taken ? btb_target : pcplus_FE;
             inst_count_FE <= inst_count_FE + 1;
         end
     end
-
 
     // update latch
     always @ (posedge clk)
@@ -100,11 +130,29 @@ module FE_STAGE(
         end
         else
         begin
-            if (!br_cond_AGEX && stall_pipe_FE)
+            if (!br_mispredicted_AGEX && stall_pipe_FE)
                 FE_latch <= FE_latch;
             else
                 FE_latch <= FE_latch_contents;
         end
     end
 
+    always @(posedge clk)
+    begin
+        if (reset)
+        begin
+            for (integer i = 0; i < 16; ++i)
+                btb[i] <= 59'b0;
+            bhr <= 0;
+        end
+        else if (is_br_AGEX)
+        begin
+	    bhr <= {bhr[6:0], br_taken_AGEX};
+	    btb[PC_AGEX[5:2]] <= {1'b1, PC_AGEX[31:6], br_target_AGEX};
+	    if (br_taken_AGEX)
+		pht[pht_index_AGEX] <= pht[pht_index_AGEX] == 3 ? 3 : pht[pht_index_AGEX] + 1;
+	    else
+		pht[pht_index_AGEX] <= pht[pht_index_AGEX] == 0 ? 0 : pht[pht_index_AGEX] - 1;
+        end
+    end
 endmodule
