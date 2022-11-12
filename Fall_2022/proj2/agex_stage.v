@@ -140,7 +140,7 @@ module AGEX_STAGE(
             `JALR_I:
             begin
                 alu_out = pcplus_AGEX;
-                address = {{rs1_val_AGEX + sxt_imm_AGEX}[31:1], 1'b0};
+                address = {rs1_val_AGEX + sxt_imm_AGEX} & -2;
             end
 
             `BEQ_I:

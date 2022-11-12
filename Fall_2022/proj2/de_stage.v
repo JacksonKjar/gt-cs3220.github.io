@@ -30,10 +30,6 @@ module DE_STAGE(
     wire [6:0] F7_DE;
     wire [6:0] op_DE;
 
-    assign op_DE = inst_DE[6:0];
-    assign F3_DE = inst_DE[14:12];
-    assign F7_DE = inst_DE[31:25];
-
     // extracting register indices
     wire [`REGNOBITS-1:0] rs1;
     wire [`REGNOBITS-1:0] rs2;
@@ -41,14 +37,41 @@ module DE_STAGE(
     wire [`REGNOBITS-1:0] rd_AGEX;
     wire [`REGNOBITS-1:0] rd_MEM;
 
-    assign rs1 = (type_I_DE == `U_Type) ? 5'b0 : inst_DE[19:15];
-    assign rs2 = (type_I_DE == `I_Type || type_I_DE == `U_Type) ? 5'b0 : inst_DE[24:20];
-    assign rd_DE = (type_I_DE == `S_Type) ? 5'b0 : inst_DE[11:7];
-
     /* opcode decoding logic */
     reg [`IOPBITS-1:0 ] op_I_DE; //  internal opcode enumerator for easy programming.
     reg [`TYPENOBITS-1:0] type_I_DE;  // instruction format type information for decoding purpose
     reg [`IMMTYPENOBITS-1:0] type_immediate_DE;  // immediate type information for decodding purpose
+
+    reg [`DBITS-1:0] rs1_val_DE;
+    reg [`DBITS-1:0] rs2_val_DE;
+
+    wire [`DBITS-1:0] forward_rs1_val;   // get reg values
+    wire [`DBITS-1:0] forward_rs2_val;   // get reg values
+
+    // extend instruction immediate values according to format
+    reg  [`DBITS-1:0] sxt_imm_DE;
+
+    /* this signal is passed from WB stage */
+    wire wr_reg_WB; // is this instruction writing into a register file?
+    wire [`REGNOBITS-1:0] wregno_WB; // destination register ID
+    wire [`DBITS-1:0] regval_WB;  // the contents to be written in the register file (or CSR )
+    wire [`CSRNOBITS-1:0] wcsrno_WB;  // desitnation CSR register ID
+    wire wr_csr_WB; // is this instruction writing into CSR ?
+    wire br_cond_AGEX;
+    wire rs1_dependency;
+    wire rs2_dependency;
+    wire pipeline_stall_DE;
+    wire [7:0] pht_index;
+    wire [`DBITS-1:0] predicted_pc;
+    wire invalid;
+
+    assign op_DE = inst_DE[6:0];
+    assign F3_DE = inst_DE[14:12];
+    assign F7_DE = inst_DE[31:25];
+
+    assign rs1 = (type_I_DE == `U_Type) ? 5'b0 : inst_DE[19:15];
+    assign rs2 = (type_I_DE == `I_Type || type_I_DE == `U_Type) ? 5'b0 : inst_DE[24:20];
+    assign rd_DE = (type_I_DE == `S_Type) ? 5'b0 : inst_DE[11:7];
 
     // determine opcode
     always @(*)
@@ -199,8 +222,6 @@ module DE_STAGE(
         end
     end
 
-    // extend instruction immediate values according to format
-    reg  [`DBITS-1:0] sxt_imm_DE;
     always @(*)
     begin
         case (type_immediate_DE )
@@ -221,11 +242,6 @@ module DE_STAGE(
         endcase
     end
 
-    reg [`DBITS-1:0] rs1_val_DE;
-    reg [`DBITS-1:0] rs2_val_DE;
-
-    wire [`DBITS-1:0] forward_rs1_val;   // get reg values
-    wire [`DBITS-1:0] forward_rs2_val;   // get reg values
 
     assign forward_rs1_val = rs1 != 0 && wr_reg_WB && rs1 == wregno_WB ? regval_WB : regs[rs1];
     assign forward_rs2_val = rs2 != 0 && wr_reg_WB && rs2 == wregno_WB ? regval_WB : regs[rs2];
@@ -250,31 +266,16 @@ module DE_STAGE(
         endcase
     end
 
-    /* this signal is passed from WB stage */
-    wire wr_reg_WB; // is this instruction writing into a register file?
-    wire [`REGNOBITS-1:0] wregno_WB; // destination register ID
-    wire [`DBITS-1:0] regval_WB;  // the contents to be written in the register file (or CSR )
-    wire [`CSRNOBITS-1:0] wcsrno_WB;  // desitnation CSR register ID
-    wire wr_csr_WB; // is this instruction writing into CSR ?
     assign { wr_reg_WB, wregno_WB, regval_WB, wcsrno_WB, wr_csr_WB} = from_WB_to_DE;
-
-    wire br_cond_AGEX;
     assign { br_cond_AGEX, rd_AGEX } = from_AGEX_to_DE;
     assign { rd_MEM } = from_MEM_to_DE;
 
-    wire rs1_dependency;
     assign rs1_dependency = rs1 != 0 && (rs1 == rd_AGEX || rs1 == rd_MEM);
-    wire rs2_dependency;
     assign rs2_dependency = rs2 != 0 && (rs2 == rd_AGEX || rs2 == rd_MEM);
 
-    wire pipeline_stall_DE;
     assign pipeline_stall_DE = rs1_dependency || rs2_dependency;
     assign from_DE_to_FE = {pipeline_stall_DE}; // pass the DE stage stall signal to FE stage
 
-    wire [7:0] pht_index;
-    wire [`DBITS-1:0] predicted_pc;
-
-    wire invalid;
     assign {
             inst_DE,
             PC_DE,
@@ -323,7 +324,7 @@ module DE_STAGE(
     end
 
     // write latch
-    always @ (posedge clk)
+    always @ (posedge clk, reset)
     begin
         if (reset)
         begin

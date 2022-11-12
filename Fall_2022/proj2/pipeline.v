@@ -81,7 +81,7 @@ module pipeline (
                  .from_WB_to_MEM(from_WB_to_MEM)
              );
 
-    always @ (posedge clk)
+    always @ (posedge clk, reset)
     begin
         if (reset)
             cycle_count <= 0;

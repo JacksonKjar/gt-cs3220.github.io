@@ -14,13 +14,6 @@ module FE_STAGE(
     (* ram_init_file = `IDMEMINITFILE *)
     reg [`DBITS-1:0] imem [`IMEMWORDS-1:0];
 
-    initial
-    begin
-        $readmemh(`IDMEMINITFILE , imem);
-        for (integer i = 0; i < 256; ++i)
-            pht[i] = 0;
-    end
-
     /*
     // Display memory contents with verilator 
     always @(posedge clk) begin
@@ -30,30 +23,39 @@ module FE_STAGE(
     end
     */
 
-    // branch prediction
-
-    reg [1:0] pht [255:0];
-
-    reg [7:0] bhr;
-
-    reg [58:0] btb [15:0];
-
-    wire [58:0] btb_entry = btb[PC_FE_latch[5:2]];
-    wire [`DBITS - 1 : 0] btb_target = btb_entry[31:0];
-    wire btb_hit = btb_entry[58] && btb_entry[57:32] == PC_FE_latch[31:6];
-
-    wire [7:0] pht_index = PC_FE_latch[9:2] ^ bhr;
-    wire predict_taken = pht[pht_index] > 1 && btb_hit;
-
     /* pipeline latch */
     reg [`FE_latch_WIDTH-1:0] FE_latch;
     reg [`DBITS-1:0] PC_FE_latch; // PC latch in the FE stage
-
     wire [`FE_latch_WIDTH-1:0] FE_latch_contents;  // the signals used to update latch
     wire [`INSTBITS-1:0] inst_FE;  // instruction value in the FE stage
     wire [`DBITS-1:0] pcplus_FE;  // next instruction address
     wire stall_pipe_FE; // signal to indicate when a front-end needs to be stall
 
+    // branch prediction
+    reg [1:0] pht [255:0];
+    reg [7:0] bhr;
+    reg [58:0] btb [15:0];
+    wire [58:0] btb_entry;
+    wire [`DBITS - 1 : 0] btb_target;
+    wire btb_hit;
+    wire [7:0] pht_index;
+    wire predict_taken;
+    wire [`DBITS-1:0] predicted_pc;
+
+    wire is_br_AGEX; // was this instruction a branch
+    wire br_mispredicted_AGEX; // did we mispredict it
+    wire br_taken_AGEX; // is the branch supposed to be taken
+    wire [`DBITS-1:0] br_target_AGEX; // new pc if taken
+    wire [`DBITS-1:0] pcplus_AGEX; // new pc if not taken
+    wire [`DBITS-1:0] PC_AGEX; // used to index the btb to add target
+    wire [7:0] pht_index_AGEX; // used to index the pht
+
+    initial
+    begin
+        $readmemh(`IDMEMINITFILE , imem);
+        for (integer i = 0; i < 256; ++i)
+            pht[i] = 0;
+    end
 
     // reading instruction from imem
     assign inst_FE = imem[PC_FE_latch[`IMEMADDRBITS-1:`IMEMWORDBITS]];  // this code works. imem is stored 4B together
@@ -68,8 +70,14 @@ module FE_STAGE(
     // This is the value of "incremented PC", computed in the FE stage
     assign pcplus_FE = PC_FE_latch + `INSTSIZE;
 
+    assign btb_entry = btb[PC_FE_latch[5:2]];
+    assign  btb_target = btb_entry[31:0];
+    assign btb_hit = btb_entry[58] && btb_entry[57:32] == PC_FE_latch[31:6];
+    assign pht_index = PC_FE_latch[9:2] ^ bhr;
+    assign predict_taken = pht[pht_index] > 1 && btb_hit;
+    assign predicted_pc = predict_taken ? btb_target : pcplus_FE;
 
-    wire [`DBITS-1:0] predicted_pc = predict_taken ? btb_target : pcplus_FE;
+
 
     // the order of latch contents should be matched in the decode stage when we extract the contents.
     assign FE_latch_contents = {
@@ -83,13 +91,6 @@ module FE_STAGE(
                `BUS_CANARY_VALUE // for an error checking of bus encoding/decoding
            };
 
-    wire is_br_AGEX; // was this instruction a branch
-    wire br_mispredicted_AGEX; // did we mispredict it
-    wire br_taken_AGEX; // is the branch supposed to be taken
-    wire [`DBITS-1:0] br_target_AGEX; // new pc if taken
-    wire [`DBITS-1:0] pcplus_AGEX; // new pc if not taken
-    wire [`DBITS-1:0] PC_AGEX; // used to index the btb to add target
-    wire [7:0] pht_index_AGEX; // used to index the pht
     assign {
 	is_br_AGEX,
 	br_mispredicted_AGEX,
@@ -102,7 +103,7 @@ module FE_STAGE(
     assign {stall_pipe_FE} = from_DE_to_FE;
 
     // update PC
-    always @ (posedge clk)
+    always @ (posedge clk, reset)
     begin
         if (reset)
         begin
@@ -124,7 +125,7 @@ module FE_STAGE(
     end
 
     // update latch
-    always @ (posedge clk)
+    always @ (posedge clk, reset)
     begin
         if (reset)
         begin
@@ -139,7 +140,7 @@ module FE_STAGE(
         end
     end
 
-    always @(posedge clk)
+    always @(posedge clk, reset)
     begin
         if (reset)
         begin
