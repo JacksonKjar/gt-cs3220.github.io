@@ -1,0 +1,494 @@
+
+****** Vitis HLS - High-Level Synthesis from C, C++ and OpenCL v2022.2 (64-bit)
+  **** SW Build 3670227 on Oct 13 2022
+  **** IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+source /opt/Xilinx/Vitis_HLS/2022.2/scripts/vitis_hls/hls.tcl -notrace
+INFO: [HLS 200-10] Running '/opt/Xilinx/Vitis_HLS/2022.2/bin/unwrapped/lnx64.o/vitis_hls'
+INFO: [HLS 200-10] For user 'btine3' on host 'MD-FNHGJL3.' (Linux_x86_64 version 5.15.74.2-microsoft-standard-WSL2) on Wed Nov 30 11:13:31 EST 2022
+INFO: [HLS 200-10] On os Ubuntu 18.04.6 LTS
+INFO: [HLS 200-10] In directory '/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution'
+Sourcing Tcl script 'run_hls.tcl'
+INFO: [HLS 200-1510] Running: open_project -reset project 
+INFO: [HLS 200-10] Creating and opening project '/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project'.
+INFO: [HLS 200-1510] Running: add_files convolution.cpp 
+INFO: [HLS 200-10] Adding design file 'convolution.cpp' to the project
+INFO: [HLS 200-1510] Running: add_files convolution.h 
+INFO: [HLS 200-10] Adding design file 'convolution.h' to the project
+INFO: [HLS 200-1510] Running: add_files -tb testbench.cpp 
+INFO: [HLS 200-10] Adding test bench file 'testbench.cpp' to the project
+INFO: [HLS 200-1510] Running: set_top convolve_hls 
+INFO: [HLS 200-1510] Running: open_solution -reset solution1 
+INFO: [HLS 200-10] Creating and opening solution '/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1'.
+INFO: [HLS 200-10] Cleaning up the solution database.
+INFO: [HLS 200-1505] Using default flow_target 'vivado'
+Resolution: For help on HLS 200-1505 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.2;t=hls+guidance;d=200-1505.html
+INFO: [HLS 200-435] Setting 'open_solution -flow_target vivado' configuration: config_interface -m_axi_latency=0
+INFO: [HLS 200-1510] Running: set_part xc7z020-clg400-1 
+INFO: [HLS 200-1611] Setting target device to 'xc7z020-clg400-1'
+INFO: [HLS 200-1510] Running: create_clock -period 10 
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 10ns.
+INFO: [HLS 200-1510] Running: csim_design 
+Running Dispatch Server on port: 40075
+INFO: [SIM 211-2] *************** CSIM start ***************
+INFO: [SIM 211-4] CSIM will launch GCC as the compiler.
+   Compiling ../../../../testbench.cpp in debug mode
+   Compiling ../../../../convolution.cpp in debug mode
+   Generating csim.exe
+kernel i:0 j:0 val:0 
+kernel i:0 j:1 val:0 
+kernel i:0 j:2 val:0 
+kernel i:1 j:0 val:0 
+kernel i:1 j:1 val:1 
+kernel i:1 j:2 val:0 
+kernel i:2 j:0 val:0 
+kernel i:2 j:1 val:0 
+kernel i:2 j:2 val:0 
+boarder_height:1 border_width:1
+width:5 height:5 padd_width:7 padd_height:7
+sending B[0]
+sending B[1]
+sending B[2]
+sending B[3]
+sending B[4]
+sending B[5]
+sending B[6]
+sending B[7]
+sending B[8]
+sending B[9]
+sending B[10]
+sending B[11]
+sending B[12]
+sending B[13]
+sending B[14]
+sending B[15]
+sending B[16]
+sending B[17]
+sending B[18]
+sending B[19]
+sending B[20]
+sending B[21]
+sending B[22]
+sending B[23]
+sending B[24]
+
+*** TEST PASSED ***
+INFO [HLS SIM]: The maximum depth reached by any hls::stream() instance in the design is 34
+INFO: [SIM 211-1] CSim done with 0 errors.
+INFO: [SIM 211-3] *************** CSIM finish ***************
+INFO: [HLS 200-111] Finished Command csim_design CPU user time: 2.54 seconds. CPU system time: 0.32 seconds. Elapsed time: 2.98 seconds; current allocated memory: 0.000 MB.
+INFO: [HLS 200-1510] Running: csynth_design 
+INFO: [HLS 200-111] Finished File checks and directory preparation: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.01 seconds; current allocated memory: 748.109 MB.
+INFO: [HLS 200-10] Analyzing design file 'convolution.cpp' ... 
+INFO: [HLS 200-111] Finished Source Code Analysis and Preprocessing: CPU user time: 2.46 seconds. CPU system time: 0.4 seconds. Elapsed time: 3.15 seconds; current allocated memory: 750.945 MB.
+INFO: [HLS 200-777] Using interface defaults for 'Vivado' flow target.
+INFO: [HLS 214-186] Unrolling loop 'CC' (convolution.cpp:134:9) in function 'convolve_hls' completely with a factor of 5 (convolution.cpp:73:0)
+INFO: [HLS 200-111] Finished Compiling Optimization and Transform: CPU user time: 2.84 seconds. CPU system time: 0.28 seconds. Elapsed time: 3.13 seconds; current allocated memory: 751.156 MB.
+INFO: [HLS 200-111] Finished Checking Pragmas: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0 seconds; current allocated memory: 751.156 MB.
+INFO: [HLS 200-10] Starting code transformations ...
+INFO: [HLS 200-111] Finished Standard Transforms: CPU user time: 0.04 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.05 seconds; current allocated memory: 758.941 MB.
+INFO: [HLS 200-10] Checking synthesizability ...
+INFO: [HLS 200-111] Finished Checking Synthesizability: CPU user time: 0.08 seconds. CPU system time: 0 seconds. Elapsed time: 0.08 seconds; current allocated memory: 768.473 MB.
+INFO: [XFORM 203-510] Pipelining loop 'RI' (convolution.cpp:104) in function 'convolve_hls' automatically.
+INFO: [XFORM 203-510] Pipelining loop 'CD' (convolution.cpp:113) in function 'convolve_hls' automatically.
+INFO: [XFORM 203-510] Pipelining loop 'CP' (convolution.cpp:117) in function 'convolve_hls' automatically.
+INFO: [XFORM 203-510] Pipelining loop 'PJ' (convolution.cpp:122) in function 'convolve_hls' automatically.
+INFO: [XFORM 203-510] Pipelining loop 'CR' (convolution.cpp:133) in function 'convolve_hls' automatically.
+INFO: [XFORM 203-510] Pipelining loop 'SO' (convolution.cpp:162) in function 'convolve_hls' automatically.
+INFO: [XFORM 203-502] Unrolling all sub-loops inside loop 'CR' (convolution.cpp:133) in function 'convolve_hls' for pipelining.
+INFO: [HLS 200-489] Unrolling loop 'KH' (convolution.cpp:141) in function 'convolve_hls' completely with a factor of 3.
+INFO: [HLS 200-489] Unrolling loop 'KW' (convolution.cpp:141) in function 'convolve_hls' completely with a factor of 3.
+INFO: [HLS 200-111] Finished Loop, function and other optimizations: CPU user time: 0.13 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.14 seconds; current allocated memory: 801.633 MB.
+INFO: [XFORM 203-541] Flattening a loop nest 'PI' (convolution.cpp:121:14) in function 'convolve_hls'.
+INFO: [HLS 200-472] Inferring partial write operation for 'local_in_buffer' (convolution.cpp:106:34)
+INFO: [HLS 200-472] Inferring partial write operation for 'local_out_buffer' (convolution.cpp:114:29)
+INFO: [HLS 200-472] Inferring partial write operation for 'padded_dst' (convolution.cpp:118:23)
+INFO: [HLS 200-472] Inferring partial write operation for 'padded_dst' (convolution.cpp:125:33)
+INFO: [HLS 200-472] Inferring partial write operation for 'local_out_buffer' (convolution.cpp:153:39)
+INFO: [HLS 200-111] Finished Architecture Synthesis: CPU user time: 0.09 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.11 seconds; current allocated memory: 852.969 MB.
+INFO: [HLS 200-10] Starting hardware synthesis ...
+INFO: [HLS 200-10] Synthesizing 'convolve_hls' ...
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'convolve_hls_Pipeline_RI' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop 'RI'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, loop 'RI'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.05 seconds; current allocated memory: 854.082 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.02 seconds; current allocated memory: 854.082 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'convolve_hls_Pipeline_CD' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop 'CD'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, loop 'CD'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.02 seconds; current allocated memory: 854.363 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.01 seconds; current allocated memory: 854.363 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'convolve_hls_Pipeline_CP' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [HLS 200-1457] Automatically inferring inferring RAM_1WNR storage type for array 'padded_dst'. Use bind_storage pragma to override this type.
+INFO: [SCHED 204-61] Pipelining loop 'CP'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, loop 'CP'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 854.566 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.01 seconds; current allocated memory: 854.566 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'convolve_hls_Pipeline_PI_PJ' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [HLS 200-1457] Automatically inferring inferring RAM_1WNR storage type for array 'padded_dst'. Use bind_storage pragma to override this type.
+INFO: [SCHED 204-61] Pipelining loop 'PI_PJ'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 3, loop 'PI_PJ'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 854.598 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 854.598 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'convolve_hls_Pipeline_CR' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [HLS 200-1457] Automatically inferring inferring RAM_1WNR storage type for array 'padded_dst'. Use bind_storage pragma to override this type.
+INFO: [SCHED 204-61] Pipelining loop 'CR'.
+WARNING: [HLS 200-885] The II Violation in module 'convolve_hls_Pipeline_CR' (loop 'CR'): Unable to schedule 'store' operation ('local_out_buffer_addr_1_write_ln153', convolution.cpp:153) of variable 'padded_dst_load_1', convolution.cpp:146 on array 'local_out_buffer' due to limited memory ports (II = 1). Please consider using a memory core with more ports or partitioning the array 'local_out_buffer'.
+Resolution: For help on HLS 200-885 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.2;t=hls+guidance;d=200-885.html
+WARNING: [HLS 200-885] The II Violation in module 'convolve_hls_Pipeline_CR' (loop 'CR'): Unable to schedule 'store' operation ('local_out_buffer_addr_3_write_ln153', convolution.cpp:153) of variable 'padded_dst_load_3', convolution.cpp:146 on array 'local_out_buffer' due to limited memory ports (II = 2). Please consider using a memory core with more ports or partitioning the array 'local_out_buffer'.
+Resolution: For help on HLS 200-885 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.2;t=hls+guidance;d=200-885.html
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 3, Depth = 4, loop 'CR'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.12 seconds. CPU system time: 0 seconds. Elapsed time: 0.12 seconds; current allocated memory: 855.582 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.06 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 855.582 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'convolve_hls_Pipeline_SO' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop 'SO'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, loop 'SO'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.09 seconds. CPU system time: 0 seconds. Elapsed time: 0.08 seconds; current allocated memory: 855.875 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.01 seconds; current allocated memory: 855.875 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'convolve_hls' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.04 seconds; current allocated memory: 856.109 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.07 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.09 seconds; current allocated memory: 856.109 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'convolve_hls_Pipeline_RI' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'convolve_hls_Pipeline_RI' pipeline 'RI' pipeline type 'loop pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'convolve_hls_Pipeline_RI'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.11 seconds. CPU system time: 0 seconds. Elapsed time: 0.11 seconds; current allocated memory: 856.109 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'convolve_hls_Pipeline_CD' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-100] Finished creating RTL model for 'convolve_hls_Pipeline_CD'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.04 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.04 seconds; current allocated memory: 856.539 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'convolve_hls_Pipeline_CP' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-100] Finished creating RTL model for 'convolve_hls_Pipeline_CP'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.05 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 857.090 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'convolve_hls_Pipeline_PI_PJ' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'convolve_hls_Pipeline_PI_PJ' pipeline 'PI_PJ' pipeline type 'loop pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'convolve_hls_Pipeline_PI_PJ'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.06 seconds; current allocated memory: 857.844 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'convolve_hls_Pipeline_CR' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'convolve_hls_Pipeline_CR' pipeline 'CR' pipeline type 'loop pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'convolve_hls_Pipeline_CR'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.12 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.13 seconds; current allocated memory: 859.316 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'convolve_hls_Pipeline_SO' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'convolve_hls_Pipeline_SO' pipeline 'SO' pipeline type 'loop pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'convolve_hls_Pipeline_SO'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.14 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.16 seconds; current allocated memory: 860.723 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'convolve_hls' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+WARNING: [RTGEN 206-101] Design contains AXI ports. Reset is fixed to synchronous and active low.
+INFO: [RTGEN 206-500] Setting interface mode on port 'convolve_hls/A_V_data_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'convolve_hls/A_V_keep_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'convolve_hls/A_V_strb_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'convolve_hls/A_V_user_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'convolve_hls/A_V_last_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'convolve_hls/A_V_id_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'convolve_hls/A_V_dest_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'convolve_hls/B_V_data_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'convolve_hls/B_V_keep_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'convolve_hls/B_V_strb_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'convolve_hls/B_V_user_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'convolve_hls/B_V_last_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'convolve_hls/B_V_id_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'convolve_hls/B_V_dest_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on function 'convolve_hls' to 's_axilite & ap_ctrl_hs'.
+INFO: [RTGEN 206-100] Bundling port 'return' to AXI-Lite port control.
+INFO: [RTGEN 206-100] Finished creating RTL model for 'convolve_hls'.
+INFO: [RTMG 210-278] Implementing memory 'convolve_hls_local_in_buffer_RAM_AUTO_1R1W' using auto RAMs.
+INFO: [RTMG 210-278] Implementing memory 'convolve_hls_local_out_buffer_RAM_AUTO_1R1W' using auto RAMs.
+INFO: [RTMG 210-278] Implementing memory 'convolve_hls_padded_dst_RAM_1WNR_AUTO_1R1W' using auto RAMs.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.07 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.08 seconds; current allocated memory: 862.441 MB.
+INFO: [HLS 200-111] Finished Generating all RTL models: CPU user time: 0.35 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.36 seconds; current allocated memory: 865.961 MB.
+INFO: [HLS 200-111] Finished Updating report files: CPU user time: 0.3 seconds. CPU system time: 0 seconds. Elapsed time: 0.3 seconds; current allocated memory: 870.215 MB.
+INFO: [VHDL 208-304] Generating VHDL RTL for convolve_hls.
+INFO: [VLOG 209-307] Generating Verilog RTL for convolve_hls.
+INFO: [HLS 200-790] **** Loop Constraint Status: All loop constraints were NOT satisfied.
+INFO: [HLS 200-789] **** Estimated Fmax: 144.84 MHz
+INFO: [HLS 200-111] Finished Command csynth_design CPU user time: 7.43 seconds. CPU system time: 0.85 seconds. Elapsed time: 8.61 seconds; current allocated memory: 122.656 MB.
+INFO: [HLS 200-1510] Running: cosim_design 
+INFO: [COSIM 212-47] Using XSIM for RTL simulation.
+INFO: [COSIM 212-14] Instrumenting C test bench ...
+   Build using "/opt/Xilinx/Vitis_HLS/2022.2/tps/lnx64/gcc-8.3.0/bin/g++"
+   Compiling apatb_convolve_hls.cpp
+   Compiling testbench.cpp_pre.cpp.tb.cpp
+   Compiling apatb_convolve_hls_util.cpp
+   Compiling convolution.cpp_pre.cpp.tb.cpp
+   Compiling apatb_convolve_hls_ir.ll
+   Generating cosim.tv.exe
+INFO: [COSIM 212-302] Starting C TB testing ... 
+kernel i:0 j:0 val:0 
+kernel i:0 j:1 val:0 
+kernel i:0 j:2 val:0 
+kernel i:1 j:0 val:0 
+kernel i:1 j:1 val:1 
+kernel i:1 j:2 val:0 
+kernel i:2 j:0 val:0 
+kernel i:2 j:1 val:0 
+kernel i:2 j:2 val:0 
+boarder_height:1 border_width:1
+width:5 height:5 padd_width:7 padd_height:7
+sending B[0]
+sending B[1]
+sending B[2]
+sending B[3]
+sending B[4]
+sending B[5]
+sending B[6]
+sending B[7]
+sending B[8]
+sending B[9]
+sending B[10]
+sending B[11]
+sending B[12]
+sending B[13]
+sending B[14]
+sending B[15]
+sending B[16]
+sending B[17]
+sending B[18]
+sending B[19]
+sending B[20]
+sending B[21]
+sending B[22]
+sending B[23]
+sending B[24]
+
+*** TEST PASSED ***
+INFO [HLS SIM]: The maximum depth reached by any hls::stream() instance in the design is 34
+INFO: [COSIM 212-333] Generating C post check test bench ...
+INFO: [COSIM 212-12] Generating RTL test bench ...
+INFO: [COSIM 212-1] *** C/RTL co-simulation file generation completed. ***
+INFO: [COSIM 212-323] Starting verilog simulation. 
+INFO: [COSIM 212-15] Starting XSIM ...
+Vivado Simulator v2022.2
+Copyright 1986-1999, 2001-2022 Xilinx, Inc. All Rights Reserved.
+Running: /opt/Xilinx/Vivado/2022.2/bin/unwrapped/lnx64.o/xelab xil_defaultlib.apatb_convolve_hls_top glbl -Oenable_linking_all_libraries -prj convolve_hls.prj -L smartconnect_v1_0 -L axi_protocol_checker_v1_1_12 -L axi_protocol_checker_v1_1_13 -L axis_protocol_checker_v1_1_11 -L axis_protocol_checker_v1_1_12 -L xil_defaultlib -L unisims_ver -L xpm -L floating_point_v7_0_20 -L floating_point_v7_1_15 --lib ieee_proposed=./ieee_proposed -s convolve_hls 
+Multi-threading is on. Using 8 slave threads.
+WARNING: [XSIM 43-3431] One or more environment variables have been detected which affect the operation of the C compiler. These are typically not set in standard installations and are not tested by Xilinx, however they may be appropriate for your system, so the flow will attempt to continue.  If errors occur, try running xelab with the "-mt off -v 1" switches to see more information from the C compiler. The following environment variables have been detected:
+    LIBRARY_PATH
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/glbl.v" into library work
+INFO: [VRFC 10-311] analyzing module glbl
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/AESL_fifo.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fifo
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/convolve_hls_control_s_axi.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module convolve_hls_control_s_axi
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/convolve_hls_padded_dst_RAM_1WNR_AUTO_1R1W.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module convolve_hls_padded_dst_RAM_1WNR_AUTO_1R1W
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/AESL_deadlock_idx0_monitor.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_deadlock_idx0_monitor
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/convolve_hls_flow_control_loop_pipe_sequential_init.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module convolve_hls_flow_control_loop_pipe_sequential_init
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/AESL_axi_s_B.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_s_B
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/convolve_hls_regslice_both.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module convolve_hls_regslice_both
+INFO: [VRFC 10-311] analyzing module convolve_hls_regslice_both_w1
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/convolve_hls_convolve_hls_Pipeline_CR.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module convolve_hls_convolve_hls_Pipeline_CR
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/convolve_hls_convolve_hls_Pipeline_RI.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module convolve_hls_convolve_hls_Pipeline_RI
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/convolve_hls.autotb.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module apatb_convolve_hls_top
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/convolve_hls_convolve_hls_Pipeline_CD.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module convolve_hls_convolve_hls_Pipeline_CD
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/convolve_hls_convolve_hls_Pipeline_PI_PJ.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module convolve_hls_convolve_hls_Pipeline_PI_PJ
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/convolve_hls_local_out_buffer_RAM_AUTO_1R1W.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module convolve_hls_local_out_buffer_RAM_AUTO_1R1W
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/AESL_axi_slave_control.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_slave_control
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/convolve_hls_local_in_buffer_RAM_AUTO_1R1W.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module convolve_hls_local_in_buffer_RAM_AUTO_1R1W
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/convolve_hls.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module convolve_hls
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/convolve_hls_convolve_hls_Pipeline_CP.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module convolve_hls_convolve_hls_Pipeline_CP
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/convolve_hls_convolve_hls_Pipeline_SO.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module convolve_hls_convolve_hls_Pipeline_SO
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/AESL_deadlock_kernel_monitor_top.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_deadlock_kernel_monitor_top
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/AESL_axi_s_A.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_s_A
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/dataflow_monitor.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module dataflow_monitor
+Starting static elaboration
+Pass Through NonSizing Optimizer
+WARNING: [VRFC 10-3645] port 'axis_block_info' remains unconnected for this instance [/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/AESL_deadlock_kernel_monitor_top.v:21]
+Completed static elaboration
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling package xil_defaultlib.$unit_dataflow_monitor_sv
+Compiling module xil_defaultlib.convolve_hls_local_in_buffer_RAM...
+Compiling module xil_defaultlib.convolve_hls_local_out_buffer_RA...
+Compiling module xil_defaultlib.convolve_hls_padded_dst_RAM_1WNR...
+Compiling module xil_defaultlib.convolve_hls_flow_control_loop_p...
+Compiling module xil_defaultlib.convolve_hls_convolve_hls_Pipeli...
+Compiling module xil_defaultlib.convolve_hls_convolve_hls_Pipeli...
+Compiling module xil_defaultlib.convolve_hls_convolve_hls_Pipeli...
+Compiling module xil_defaultlib.convolve_hls_convolve_hls_Pipeli...
+Compiling module xil_defaultlib.convolve_hls_convolve_hls_Pipeli...
+Compiling module xil_defaultlib.convolve_hls_convolve_hls_Pipeli...
+Compiling module xil_defaultlib.convolve_hls_control_s_axi
+Compiling module xil_defaultlib.convolve_hls_regslice_both
+Compiling module xil_defaultlib.convolve_hls_regslice_both(DataW...
+Compiling module xil_defaultlib.convolve_hls_regslice_both(DataW...
+Compiling module xil_defaultlib.convolve_hls_regslice_both(DataW...
+Compiling module xil_defaultlib.convolve_hls_regslice_both(DataW...
+Compiling module xil_defaultlib.convolve_hls_regslice_both(DataW...
+Compiling module xil_defaultlib.convolve_hls
+Compiling module xil_defaultlib.fifo(DEPTH=34,WIDTH=32)
+Compiling module xil_defaultlib.fifo(DEPTH=34,WIDTH=4)
+Compiling module xil_defaultlib.fifo(DEPTH=34,WIDTH=2)
+Compiling module xil_defaultlib.fifo(DEPTH=34,WIDTH=1)
+Compiling module xil_defaultlib.fifo(DEPTH=34,WIDTH=5)
+Compiling module xil_defaultlib.fifo(DEPTH=34,WIDTH=6)
+Compiling module xil_defaultlib.AESL_axi_s_A
+Compiling module xil_defaultlib.fifo(DEPTH=25,WIDTH=32)
+Compiling module xil_defaultlib.fifo(DEPTH=25,WIDTH=4)
+Compiling module xil_defaultlib.fifo(DEPTH=25,WIDTH=2)
+Compiling module xil_defaultlib.fifo(DEPTH=25,WIDTH=1)
+Compiling module xil_defaultlib.fifo(DEPTH=25,WIDTH=5)
+Compiling module xil_defaultlib.fifo(DEPTH=25,WIDTH=6)
+Compiling module xil_defaultlib.AESL_axi_s_B
+Compiling module xil_defaultlib.AESL_axi_slave_control
+Compiling module xil_defaultlib.AESL_deadlock_idx0_monitor
+Compiling module xil_defaultlib.AESL_deadlock_kernel_monitor_top...
+Compiling module xil_defaultlib.nodf_module_intf
+Compiling module xil_defaultlib.upc_loop_intf(FSM_WIDTH=1)
+Compiling module xil_defaultlib.upc_loop_intf(FSM_WIDTH=3)
+Compiling module xil_defaultlib.dataflow_monitor_1
+Compiling module xil_defaultlib.apatb_convolve_hls_top
+Compiling module work.glbl
+Built simulation snapshot convolve_hls
+
+****** xsim v2022.2 (64-bit)
+  **** SW Build 3671981 on Fri Oct 14 04:59:54 MDT 2022
+  **** IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+source xsim.dir/convolve_hls/xsim_script.tcl
+# xsim {convolve_hls} -autoloadwcfg -tclbatch {convolve_hls.tcl}
+Time resolution is 1 ps
+source convolve_hls.tcl
+## run all
+////////////////////////////////////////////////////////////////////////////////////
+// Inter-Transaction Progress: Completed Transaction / Total Transaction
+// Intra-Transaction Progress: Measured Latency / Latency Estimation * 100%
+//
+// RTL Simulation : "Inter-Transaction Progress" ["Intra-Transaction Progress"] @ "Simulation Time"
+////////////////////////////////////////////////////////////////////////////////////
+// RTL Simulation : 0 / 1 [n/a] @ "125000"
+// RTL Simulation : 1 / 1 [n/a] @ "1865000"
+////////////////////////////////////////////////////////////////////////////////////
+$finish called at time : 1925 ns : File "/home/btine3/dev/gt-cs3220.github.io/Fall_2022/proj5/convolution/project/solution1/sim/verilog/convolve_hls.autotb.v" Line 446
+## quit
+INFO: [Common 17-206] Exiting xsim at Wed Nov 30 11:14:15 2022...
+INFO: [COSIM 212-316] Starting C post checking ...
+kernel i:0 j:0 val:0 
+kernel i:0 j:1 val:0 
+kernel i:0 j:2 val:0 
+kernel i:1 j:0 val:0 
+kernel i:1 j:1 val:1 
+kernel i:1 j:2 val:0 
+kernel i:2 j:0 val:0 
+kernel i:2 j:1 val:0 
+kernel i:2 j:2 val:0 
+boarder_height:1 border_width:1
+width:5 height:5 padd_width:7 padd_height:7
+
+*** TEST PASSED ***
+INFO [HLS SIM]: The maximum depth reached by any hls::stream() instance in the design is 34
+INFO: [COSIM 212-1000] *** C/RTL co-simulation finished: PASS ***
+INFO: [COSIM 212-211] II is measurable only when transaction number is greater than 1 in RTL simulation. Otherwise, they will be marked as all NA. If user wants to calculate them, please make sure there are at least 2 transactions in RTL simulation.
+INFO: [HLS 200-111] Finished Command cosim_design CPU user time: 21.56 seconds. CPU system time: 1.71 seconds. Elapsed time: 20.61 seconds; current allocated memory: 11.293 MB.
+INFO: [HLS 200-1510] Running: export_design 
+INFO: [IMPL 213-8] Exporting RTL as a Vivado IP.
+
+****** Vivado v2022.2 (64-bit)
+  **** SW Build 3671981 on Fri Oct 14 04:59:54 MDT 2022
+  **** IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+source run_ippack.tcl -notrace
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository '/opt/Xilinx/Vivado/2022.2/data/ip'.
+INFO: [Common 17-206] Exiting Vivado at Wed Nov 30 11:14:25 2022...
+INFO: [HLS 200-802] Generated output file project/solution1/impl/export.zip
+INFO: [HLS 200-111] Finished Command export_design CPU user time: 10.36 seconds. CPU system time: 0.73 seconds. Elapsed time: 20.32 seconds; current allocated memory: 0.703 MB.
+INFO: [HLS 200-112] Total CPU user time: 44.06 seconds. Total CPU system time: 4.04 seconds. Total elapsed time: 65.04 seconds; peak allocated memory: 882.695 MB.
+INFO: [Common 17-206] Exiting vitis_hls at Wed Nov 30 11:14:35 2022...
