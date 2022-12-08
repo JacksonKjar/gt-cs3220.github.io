@@ -29,10 +29,10 @@
 #define KERNEL_HEIGHT 3
 #define KERNEL_WIDTH  3
 
-//#define TEST_IMG_ROWS 100
-//#define TEST_IMG_COLS 100
-#define TEST_IMG_ROWS 5
-#define TEST_IMG_COLS 5
+#define TEST_IMG_ROWS 100
+#define TEST_IMG_COLS 100
+//#define TEST_IMG_ROWS 5
+//#define TEST_IMG_COLS 5
 
 #define IMAGE_SIZE    (TEST_IMG_COLS * TEST_IMG_ROWS) // need to match with jupyter size
 #define KERNEL_SIZE   (KERNEL_WIDTH * KERNEL_HEIGHT)  // need to match with jupyter size

@@ -25,20 +25,19 @@
 #define MAX_IMG_ROWS 1080
 #define MAX_IMG_COLS 1920
 
-#define TEST_IMG_ROWS 30
-#define TEST_IMG_COLS 30 // 150 to 100
+#define TEST_IMG_ROWS 100
+#define TEST_IMG_COLS 100 // 150 to 100
 #define KERNEL_HEIGHT 3
 #define KERNEL_WIDTH 3
-#define IMAGE_SIZE 900 // need to match with jupyter size
-#define KERNEL_SIZE 9  // need to match with jupyter size
+#define IMAGE_SIZE (TEST_IMG_ROWS * TEST_IMG_COLS) // need to match with jupyter size
+#define KERNEL_SIZE (KERNEL_WIDTH * KERNEL_HEIGHT)  // need to match with jupyter size
 
+#define MAX_BUFF_SIZE (IMAGE_SIZE + KERNEL_SIZE)
 //#define TEST_IMG_ROWS 5
 //#define TEST_IMG_COLS 5
 
 //#define TEST_IMG_ROWS 5
 //#define TEST_IMG_COLS 640
-
-#define TEST_IMG_SIZE (TEST_IMG_ROWS * TEST_IMG_COLS)
 
 typedef int32_t data_t;
 
