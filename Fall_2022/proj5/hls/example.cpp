@@ -1,22 +1,12 @@
-
-
-
-#ifdef __SYNTHESIS__
 #include "hls_stream.h"
 #include "ap_axi_sdata.h"
-#endif
 
 #include "convolution.h"
 
 #define MAX_BUFF_SIZE 16000
 
-#ifndef __SYNTHESIS__
-void example(int *A , int *B)
-#else
 void example(hls::stream< ap_axis<32,2,5,6> > &A,
 	     hls::stream< ap_axis<32,2,5,6> > &B)
-#endif
-
 {
 #pragma HLS INTERFACE axis port=A
 #pragma HLS INTERFACE axis port=B
@@ -28,22 +18,11 @@ void example(hls::stream< ap_axis<32,2,5,6> > &A,
 	int ii, jj, max_data_length;
 
 	jj = 0;
-	KENEL_INIT:
+	KERNEL_INIT:
 	for (int aa = 0; aa < KERNEL_SIZE; aa++){
 		if (aa == 4 ) kernel[aa] = 1;  // assume kernel is 3x3
 		else kernel[aa] = 0;
 	}
-
-#ifndef __SYNTHESIS__
-
-	for (int ii = 0 ; ii <(IMAGE_SIZE+KERNEL_SIZE); ii++){
-		if (ii < IMAGE_SIZE)
-			local_in_buffer[ii] = A[ii];
-		else
-			kernel[jj++] = A[ii];
-	}
-
-#else
 
 	ap_axis<32,2,5,6> tmp;
 	ii = 0; jj = 0;
@@ -66,7 +45,6 @@ void example(hls::stream< ap_axis<32,2,5,6> > &A,
      }
     }
 
-#endif
     max_data_length = ii;
 
     /*******************************************************/
@@ -122,15 +100,15 @@ void example(hls::stream< ap_axis<32,2,5,6> > &A,
                 	    printf("col:%d row:%d output pixel loc is %d:\n ", col, row, pixel);
                         #endif
 
+                	    data_t tmp1= 0;
     #pragma HLS unroll
-                	    data_t tmp= 0;
                        KERNELH:for(int i = 0; i < KERNEL_WIDTH; i++){
                     	   KERNELW:for (int j = 0; j< KERNEL_HEIGHT; j++){
 
                     		   int src_loc = (row - border_height)*padd_width + (col-border_width) + j + (i)*padd_width;
                     		   int kernel_loc = j + i * KERNEL_HEIGHT ;
 
-                                tmp += padded_dst[src_loc] * kernel[kernel_loc];
+                                tmp1 += padded_dst[src_loc] * kernel[kernel_loc];
                                 #if DEBUG
                                 printf("output[%d]:%d += padded[%d]:%d * kernel[%d]:%d  src[%d]:%d \n",
                         		   pixel, dst[pixel], src_loc, padded_dst[src_loc], kernel_loc, kernel[kernel_loc], pixel, src[pixel]);
@@ -139,7 +117,7 @@ void example(hls::stream< ap_axis<32,2,5,6> > &A,
                     	   }
 
                        }
-                       	   local_out_buffer[pixel] = tmp;
+                       	   local_out_buffer[pixel] = tmp1;
                        #if DEBUG
     		       printf("==============\n");
                    #endif
@@ -159,12 +137,6 @@ void example(hls::stream< ap_axis<32,2,5,6> > &A,
     /*********************************************************************/
     /* sending data */
 
-#ifndef __SYNTHESIS__
-     for (int ii=0 ; ii < IMAGE_SIZE; ii++)
-    	 B[ii] = local_out_buffer[ii];
-
-
-#else
 
     jj = 0;
 
@@ -185,7 +157,6 @@ void example(hls::stream< ap_axis<32,2,5,6> > &A,
     	if (tmp.last == 1) break;
     }
 
-#endif
 }
 
 

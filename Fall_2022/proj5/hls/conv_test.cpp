@@ -17,21 +17,15 @@
 #include <iostream>
 #include <cstdlib>
 
-#ifdef __SYNTHESIS__
 #include "ap_axi_sdata.h"
 #include "hls_stream.h"
-#endif
 
 #include "convolution.h"
 
 
 using namespace std;
 
-#ifndef __SYNTHESIS__
-void example(int *A, int *B);
-#else
 void example(hls::stream< ap_axis<32,2,5,6> > &A, hls::stream< ap_axis<32,2,5,6> > &B);
-#endif
 
 int main(void)
 {
@@ -42,10 +36,8 @@ int main(void)
     int send_data[TEST_IMG_ROWS*TEST_IMG_COLS + KERNEL_SIZE];
     int rec_data[TEST_IMG_ROWS*TEST_IMG_COLS];
 
-#ifdef __SYNTHESIS__
     hls::stream<ap_axis<32,2,5,6> > A, B;
     ap_axis<32,2,5,6> tmp1, tmp2;
-#endif
 
     const int chkr_size = 5;
     const data_t max_pix_val = 255;
@@ -81,13 +73,6 @@ int main(void)
     // create a data structure to pass to example.
     int jj = 0;
     for (int ii = 0 ; ii < (IMAGE_SIZE + KERNEL_SIZE); ii++){
-
-#ifndef __SYNTHESIS__
-    	if (ii <IMAGE_SIZE)
-    		send_data[ii] = src_img[ii];
-    	else
-    		send_data[ii] = kernel[jj++];
-#else
     	if (ii < IMAGE_SIZE) {
     		tmp1.data = src_img[ii];
     	}
@@ -107,18 +92,8 @@ int main(void)
     	example(A,B);
     	// B.read(tmp2);
 
-    //}
-#endif
+    }
 
-}
-
-#ifndef __SYNTHESIS__
-	example(send_data,rec_data);
-
-	for (int ii = 0; ii <IMAGE_SIZE; ii++)
-		ref_img[ii] = rec_data[ii];
-
-#endif
 
     // Check DUT vs reference result
     for (int i = 0; i < TEST_IMG_ROWS; i++) {
