@@ -27,10 +27,10 @@
 
 #define TEST_IMG_ROWS 30
 #define TEST_IMG_COLS 30 // 150 to 100
-#define KERNEL_HEIGHT  3
+#define KERNEL_HEIGHT 3
 #define KERNEL_WIDTH 3
 #define IMAGE_SIZE 900 // need to match with jupyter size
-#define KERNEL_SIZE 9    // need to match with jupyter size
+#define KERNEL_SIZE 9  // need to match with jupyter size
 
 //#define TEST_IMG_ROWS 5
 //#define TEST_IMG_COLS 5
@@ -42,6 +42,6 @@
 
 typedef int32_t data_t;
 
-void convolution(const data_t *src, data_t *dst,  const data_t *kernel );
+void convolution(const data_t *src, data_t *dst, const data_t *kernel);
 
 #endif // CONVOLUTION_H_ not defined
