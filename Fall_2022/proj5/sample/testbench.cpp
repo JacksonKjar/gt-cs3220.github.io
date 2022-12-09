@@ -34,6 +34,7 @@ int main() {
   int err_cnt = 0;
   int ret_val = 20;
 
+  /*
   // Generate the source image with a fixed test pattern - checker-board
   for (int i = 0; i < TEST_IMG_ROWS; ++i) {
     data_t chkr_pair_val[2];
@@ -68,13 +69,13 @@ int main() {
       send_data[i] = kernel[j++];
     }
   }
+  */
 
+  for (int i = 0; i < MAX_BUFF_SIZE; i++) {
+    send_data[i] = std::rand();
+  }
   for (int i = 0, j = 0; i < MAX_BUFF_SIZE; ++i) {
-    if (i < IMAGE_SIZE) {
-      axi_tmp.data = src_img[i];
-    } else {
-      axi_tmp.data = kernel[j++];
-    }
+    axi_tmp.data = send_data[i];
     axi_tmp.keep = 1;
     axi_tmp.strb = 1;
     axi_tmp.user = 1;
@@ -104,17 +105,17 @@ int main() {
     for (int j = 0; j < TEST_IMG_COLS; ++j) {
       data_t dst_val = dst_img[i * TEST_IMG_COLS + j];
       data_t ref_val = ref_img[i * TEST_IMG_COLS + j];
-#if 0
+#if 1
             std::cout << "i:" << i;
             std::cout <<"  j:" <<j;
             std::cout <<"  " ;
-            std::cout <<" orig_val: " << orig_val; 
+            std::cout <<" orig_val: " << dst_val; 
             std::cout <<" ref_val: " << ref_val;
             std::cout << std::endl;
 #endif
       if (dst_val != ref_val) {
         ++err_cnt;
-#if 0
+#if 1
                 std::cout << "!!! ERROR: Mismatch detected at coord(" << i;
                 std::cout << ", " << j << " ) !!!";
                 std::cout << std::endl;

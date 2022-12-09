@@ -26,11 +26,7 @@ static void convolution_orig(
     const int conv_size = K;
     // Half the convolution window - rounded down - i.e. the border width
     const int border_width = int(conv_size / 2);
-#ifndef __SYNTHESIS__
-    T * const local = new T[MAX_IMG_ROWS*MAX_IMG_COLS];
-#else // Static storage allocation for HLS, dynamic otherwise
     T local[MAX_IMG_ROWS*MAX_IMG_COLS];
-#endif
 
     // Clear local frame buffer
     Clear_Local:for(int i = 0; i < height * width; i++){
