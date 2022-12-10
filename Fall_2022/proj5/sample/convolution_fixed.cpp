@@ -16,8 +16,8 @@ void convolve_hls(hls::stream<ap_axis<32, 2, 5, 6>> &A,
   int padded_dst[(TEST_IMG_ROWS + KERNEL_HEIGHT) *
                  (TEST_IMG_COLS + KERNEL_WIDTH)];
 
-  int height = TEST_IMG_COLS;
-  int width = TEST_IMG_ROWS;
+  int height = TEST_IMG_ROWS;
+  int width = TEST_IMG_COLS;
 
   int border_height = (KERNEL_HEIGHT - 1) / 2;
   int border_width = (KERNEL_WIDTH - 1) / 2;
